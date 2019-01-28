@@ -1,0 +1,4 @@
+bd/dso100/hw_handoff/
+bd/dso100/ip/dso100_processing_system7_0_0
+bd/dso100/ipshared/
+*.hwdef
