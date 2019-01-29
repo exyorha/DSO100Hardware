@@ -5,7 +5,7 @@ INIT "%ZynqInit%"
 MODULE kernel "elf kernel" "%kernel%" METADATA
 	DTB %DSO100Hardware-DTB%
 	KERNEND
-	HOWTO 0
+	HOWTO 0x840
 	ENVIRONMENT
 		SET vfs.root.mountfrom ufs:/dev/md0
 	END
