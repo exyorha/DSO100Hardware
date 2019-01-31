@@ -1,0 +1,7 @@
+/set uname=root gname=wheel
+. type=dir mode=0755
+  sbin type=dir mode=0755
+    init type=file mode=0755 contents=/root/world/sbin/init
+    ..
+  dev type=dir mode=0755
+    ..

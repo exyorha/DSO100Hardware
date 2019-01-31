@@ -1,4 +1,6 @@
 IMAGE_BASE 0x100000
+COMPRESS
+
 KICKSTART "%BSDKickstart%"
 INIT "%ZynqInit%"
 
@@ -7,6 +9,8 @@ MODULE kernel "elf kernel" "%kernel%" METADATA
 	KERNEND
 	HOWTO 0x840
 	ENVIRONMENT
-		SET vfs.root.mountfrom ufs:/dev/md0
+		SET vfs.root.mountfrom cd9660:/dev/md0.uzip
 	END
 END
+
+MODULE rootfs md_image %dso100.fs%
