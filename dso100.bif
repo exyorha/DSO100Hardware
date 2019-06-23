@@ -1,6 +1,6 @@
 dso100:
 {
   [bootloader] %DSO100Hardware-FSBL%
-  %DSO100Hardware-BIT%
+  %DSO100Hardware.bit%
   %dso100.elf%
 }

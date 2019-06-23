@@ -5,9 +5,9 @@ module dso100fb_video_mix_saturating_add (
 );
 
     wire [8:0] sum;
-    
+
     assign sum = { 1'b0, A } + { 1'b0, B };
-    
+
     assign O = sum[7:0] | { 8 { sum[8] } };
 
 endmodule
@@ -15,64 +15,64 @@ endmodule
 module dso100fb_video_mix (
     input             VIDCLK,
     input             RST_N,
-    
+
     input             VIDEO_FETCH,
     input             VIDEO_EMPTY,
     input      [31:0] VIDEO_DATA,
-    
+
     input             OVERLAY_EN,
     input             OVERLAY_VALID,
     input      [31:0] OVERLAY_DATA,
-    
+
     input             DE,
     input             HSYNC,
     input             VSYNC,
-    
-    output reg [31:0] VID_DATA,    
-    output reg        VID_DE,    
-    output reg        VID_HSYNC,    
+
+    output reg [31:0] VID_DATA,
+    output reg        VID_DE,
+    output reg        VID_HSYNC,
     output reg        VID_VSYNC
 );
 
     reg video_valid, video_valid2;
     reg [31:0] video_data_delayed;
     wire [31:0] video_data;
-    
+
     reg overlay_valid, overlay_valid2;
     reg [31:0] overlay_data_delayed;
     wire [31:0] overlay_data;
-    
+
     wire [31:0] mixed_data;
-    
+
     reg de2, hsync2, vsync2;
-    
+
     always @ (posedge VIDCLK or negedge RST_N)
         if(!RST_N)
             { video_valid2, video_valid } <= 2'b0;
         else
             { video_valid2, video_valid } <= { video_valid, VIDEO_FETCH && !VIDEO_EMPTY };
-    
+
     always @ (posedge VIDCLK or negedge RST_N)
         if(!RST_N)
             { overlay_valid2, overlay_valid } <= 2'b00;
         else
             { overlay_valid2, overlay_valid } <= { overlay_valid, OVERLAY_EN && OVERLAY_VALID };
-                           
+
     always @ (posedge VIDCLK or negedge RST_N)
         if(!RST_N)
             video_data_delayed <= 32'b0;
         else
             video_data_delayed <= VIDEO_DATA;
-                    
+
     always @ (posedge VIDCLK or negedge RST_N)
         if(!RST_N)
             overlay_data_delayed <= 32'b0;
         else
             overlay_data_delayed <= OVERLAY_DATA;
-                               
-    assign video_data = video_valid2 ? video_data_delayed : 32'b0;
-    assign overlay_data = overlay_valid2 ? overlay_data_delayed : 32'b0;
-    
+
+    assign video_data = (video_valid2 && de2) ? video_data_delayed : 32'b0;
+    assign overlay_data = (overlay_valid2 && de2) ? overlay_data_delayed : 32'b0;
+
     genvar byte;
     generate
         for(byte = 0; byte < 4; byte = byte + 1)
@@ -84,7 +84,7 @@ module dso100fb_video_mix (
             );
         end
     endgenerate
-        
+
     always @ (posedge VIDCLK or negedge RST_N)
         if(!RST_N)
         begin
