@@ -269,3 +269,47 @@
 	status = "okay";
 	phy_vbus_ext;
 };
+
+/ {
+  m_axi_gp0@40000000 {
+    device_type = "soc";
+    compatible = "simple-bus";
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges = <0x0 0x40000000 0x40000000>;
+
+    dso100fb: dso100fb@3c00000 {
+      compatible = "dso100,dso100fb";
+      status = "okay";
+      reg = <0x03c00000 0x10000>;
+      interrupts = <0 29 4>;
+      interrupt-parent = <&GIC>;
+
+      width = <800>;
+      hfrontporch = <40>;
+      hsync = <128>;
+      hbackporch = <88>;
+      height = <600>;
+      vfrontporch = <1>;
+      vsync = <4>;
+      vbackporch = <23>;
+
+      overlayx = <32>;
+      overlayy = <108>;
+      overlaywidth = <512>;
+      overlayheight = <384>;
+
+      deinverted = <0>;
+      hsyncinverted = <0>;
+      vsyncinverted = <0>;
+    };
+  };
+
+  m_axi_gp1@80000000 {
+    device_type = "soc";
+    compatible = "simple-bus";
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges = <0x0 0x80000000 0x40000000>;
+  };
+};
