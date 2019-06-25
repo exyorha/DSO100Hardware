@@ -20,6 +20,7 @@ module dso100fb_fetch (
   
   input             FIFO_LESS_THAN_WRITE_THRESHOLD,
   input             FIFO_FULL,
+  input             FIFO_HAS_SPACE_FOR_BURST,
   
   output            FIFO_WRITE,
   output     [31:0] FIFO_DATA
@@ -39,6 +40,8 @@ module dso100fb_fetch (
     reg init_address;
     wire wraparound;
     
+    reg [3:0] beat_counter;
+    
     assign wraparound = address_counter == shadow_end;
         
     always @ (posedge CLK)
@@ -55,6 +58,7 @@ module dso100fb_fetch (
             fetch_state <= `DSO100FB_FETCH_STATE_IDLE;
             init_address <= 1'b0;
             HTRANS <= 2'b00;
+            beat_counter <= 4'b0;
         end
         else
         begin
@@ -84,14 +88,16 @@ module dso100fb_fetch (
             `DSO100FB_FETCH_STATE_FETCHING:
                 if(HREADY)
                 begin
-                    if(FIFO_FULL)
+                    beat_counter <= beat_counter + 1'b1;
+                    
+                    if(beat_counter == 4'b1111 && !FIFO_HAS_SPACE_FOR_BURST)
                     begin
                         HTRANS <= 2'b00;
                         fetch_state <= `DSO100FB_FETCH_STATE_WAITING_FOR_FIFO;
                     end
                     else
                     begin
-                        if(address_counter[9:2] == 8'b1111_1111 || wraparound)
+                        if(beat_counter == 4'b0)
                             HTRANS <= 2'b10;   
                         else
                             HTRANS <= 2'b11;
@@ -102,7 +108,7 @@ module dso100fb_fetch (
         end
         
     assign HADDR = { address_counter, 2'b00 };
-    assign HBURST = 3'b001;
+    assign HBURST = 3'b111;
     assign HPROT = 4'b1111;
         
     assign HSIZE = 2'b010;

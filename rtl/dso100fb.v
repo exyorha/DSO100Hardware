@@ -107,6 +107,7 @@ module dso100fb (
     wire fifo_less_than_write_threshold;
     wire fifo_full;
     wire fifo_write;
+    wire fifo_has_space_for_burst;
     wire [31:0] fifo_write_data;
     
     wire [11:0] timing_widthbeforeoverlay;
@@ -227,6 +228,7 @@ module dso100fb (
         .HMASTLOCK(HMASTLOCK),
         
         .FIFO_LESS_THAN_WRITE_THRESHOLD(fifo_less_than_write_threshold),
+        .FIFO_HAS_SPACE_FOR_BURST(fifo_has_space_for_burst),
         .FIFO_FULL(fifo_full),
         .FIFO_WRITE(fifo_write),
         .FIFO_DATA(fifo_write_data)
@@ -234,7 +236,8 @@ module dso100fb (
     
     async_fifo #(
         .WIDTH(32),
-        .DEPTH(9)
+        .DEPTH(9),
+        .WR_THRESHOLD(9'd16)
     ) fb_fifo (
         .RD_CLK(VIDCLK),
         .RD_RST_N(vid_rst_n && !read_reset),
@@ -247,7 +250,8 @@ module dso100fb (
         .WR(fifo_write),
         .WR_FULL(fifo_full),
         .WR_DATA(fifo_write_data),
-        .WR_LESS_THAN_HALF_FULL(fifo_less_than_write_threshold)
+        .WR_LESS_THAN_HALF_FULL(fifo_less_than_write_threshold),
+        .WR_ABOVE_THRESHOLD(fifo_has_space_for_burst)
     );
     
     dso100fb_sync sync (

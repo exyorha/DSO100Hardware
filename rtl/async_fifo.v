@@ -1,6 +1,7 @@
 module async_fifo #(
     parameter WIDTH = 8,
     parameter DEPTH = 11,
+    parameter WR_THRESHOLD = 1'b0,
     localparam WORDS = 1 << DEPTH
 ) (
     input                     RD_CLK,
@@ -14,7 +15,8 @@ module async_fifo #(
     input                     WR,
     output reg                WR_FULL,
     input      [WIDTH - 1:0]  WR_DATA,
-    output                    WR_LESS_THAN_HALF_FULL
+    output                    WR_LESS_THAN_HALF_FULL,
+    output reg                WR_ABOVE_THRESHOLD
 );
         
     reg [DEPTH:0] rptr;
@@ -40,6 +42,10 @@ module async_fifo #(
     wire [DEPTH:0] wgraynext, wbinnext;
         
     wire wfull_val;
+        
+    wire [DEPTH:0] wq2_rptr_bin;
+    wire [DEPTH:0] wq2_rptr_fullval;        
+    wire [DEPTH:0] wr_available;
         
     always @ (posedge WR_CLK)
     begin
@@ -92,7 +98,8 @@ module async_fifo #(
     assign wbinnext = wbin + (WR & ~WR_FULL);
     assign wgraynext = (wbinnext >> 1) ^ wbinnext;
     
-    assign wfull_val = wgraynext == { ~wq2_rptr[DEPTH:DEPTH - 1], wq2_rptr[DEPTH - 2:0] };
+    assign wq2_rptr_fullval = { ~wq2_rptr[DEPTH:DEPTH - 1], wq2_rptr[DEPTH - 2:0] };
+    assign wfull_val = wgraynext == wq2_rptr_fullval;
     
     assign WR_LESS_THAN_HALF_FULL = (wgraynext[DEPTH] ^ wq2_rptr[DEPTH]) == 1'b0;
     
@@ -101,5 +108,23 @@ module async_fifo #(
             WR_FULL <= 1'b0;
         else
             WR_FULL <= wfull_val;
-                    
+         
+         
+    genvar i;
+    generate
+        for(i = 0; i <= DEPTH; i = i + 1)
+        begin : gray2bin
+            assign wq2_rptr_bin[i] = ^(wq2_rptr_fullval >> i);
+        end
+    endgenerate
+    
+    assign wr_available = wq2_rptr_bin - wbin;
+    
+    always @ (posedge WR_CLK or negedge WR_RST_N)
+        if(!WR_RST_N)
+            WR_ABOVE_THRESHOLD <= 1'b0;
+        else
+            WR_ABOVE_THRESHOLD <= wr_available > WR_THRESHOLD;
+        
+    
 endmodule

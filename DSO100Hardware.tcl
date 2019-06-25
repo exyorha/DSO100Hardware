@@ -146,14 +146,14 @@ set_property -name "part" -value "xc7z020clg484-1" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.ies_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "8" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "61" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "81" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
@@ -431,7 +431,7 @@ proc cr_bd_dso100 { parentCell } {
    CONFIG.PCW_ACT_DCI_PERIPHERAL_FREQMHZ {10.158730} \
    CONFIG.PCW_ACT_ENET0_PERIPHERAL_FREQMHZ {125.000000} \
    CONFIG.PCW_ACT_ENET1_PERIPHERAL_FREQMHZ {10.000000} \
-   CONFIG.PCW_ACT_FPGA0_PERIPHERAL_FREQMHZ {50.000000} \
+   CONFIG.PCW_ACT_FPGA0_PERIPHERAL_FREQMHZ {100.000000} \
    CONFIG.PCW_ACT_FPGA1_PERIPHERAL_FREQMHZ {10.000000} \
    CONFIG.PCW_ACT_FPGA2_PERIPHERAL_FREQMHZ {10.000000} \
    CONFIG.PCW_ACT_FPGA3_PERIPHERAL_FREQMHZ {10.000000} \
@@ -452,7 +452,7 @@ proc cr_bd_dso100 { parentCell } {
    CONFIG.PCW_ARMPLL_CTRL_FBDIV {40} \
    CONFIG.PCW_CAN_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_CAN_PERIPHERAL_DIVISOR1 {1} \
-   CONFIG.PCW_CLK0_FREQ {50000000} \
+   CONFIG.PCW_CLK0_FREQ {100000000} \
    CONFIG.PCW_CLK1_FREQ {10000000} \
    CONFIG.PCW_CLK2_FREQ {10000000} \
    CONFIG.PCW_CLK3_FREQ {10000000} \
@@ -491,7 +491,7 @@ proc cr_bd_dso100 { parentCell } {
    CONFIG.PCW_EN_UART1 {1} \
    CONFIG.PCW_EN_USB0 {1} \
    CONFIG.PCW_FCLK0_PERIPHERAL_DIVISOR0 {5} \
-   CONFIG.PCW_FCLK0_PERIPHERAL_DIVISOR1 {4} \
+   CONFIG.PCW_FCLK0_PERIPHERAL_DIVISOR1 {2} \
    CONFIG.PCW_FCLK1_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_FCLK1_PERIPHERAL_DIVISOR1 {1} \
    CONFIG.PCW_FCLK2_PERIPHERAL_DIVISOR0 {1} \
@@ -499,6 +499,7 @@ proc cr_bd_dso100 { parentCell } {
    CONFIG.PCW_FCLK3_PERIPHERAL_DIVISOR0 {1} \
    CONFIG.PCW_FCLK3_PERIPHERAL_DIVISOR1 {1} \
    CONFIG.PCW_FCLK_CLK0_BUF {FALSE} \
+   CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {100} \
    CONFIG.PCW_FPGA_FCLK0_ENABLE {1} \
    CONFIG.PCW_FPGA_FCLK1_ENABLE {0} \
    CONFIG.PCW_FPGA_FCLK2_ENABLE {0} \
@@ -822,10 +823,16 @@ proc cr_bd_dso100 { parentCell } {
   # Create instance: vid_clkwiz, and set properties
   set vid_clkwiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 vid_clkwiz ]
   set_property -dict [ list \
-   CONFIG.CLKOUT1_JITTER {204.383} \
+   CONFIG.CLKIN1_JITTER_PS {100.0} \
+   CONFIG.CLKOUT1_JITTER {159.371} \
+   CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {40.000} \
+   CONFIG.MMCM_CLKFBOUT_MULT_F {10.000} \
+   CONFIG.MMCM_CLKIN1_PERIOD {10.000} \
+   CONFIG.MMCM_CLKIN2_PERIOD {10.000} \
    CONFIG.MMCM_CLKOUT0_DIVIDE_F {25.000} \
    CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+   CONFIG.PRIM_IN_FREQ {100.000} \
    CONFIG.PRIM_SOURCE {Global_buffer} \
    CONFIG.USE_RESET {false} \
  ] $vid_clkwiz
