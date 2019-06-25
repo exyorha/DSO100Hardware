@@ -1,6 +1,6 @@
 module dso100fb (
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 clock_intf CLK" *)
-    (* X_INTERFACE_PARAMETER = "ASSOCIATED_ASYNC_RESET RST_N, ASSOCIATED_BUSIF APB:AHB" *)
+    (* X_INTERFACE_PARAMETER = "ASSOCIATED_ASYNC_RESET RST_N, ASSOCIATED_BUSIF MCMD_AXIS:MSTS_AXIS:MDATA_AXIS" *)
     input         CLK,
     
     (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 vid_clock_intf CLK" *)
@@ -34,39 +34,33 @@ module dso100fb (
     (* X_INTERFACE_INFO = "xilinx.com:interface:apb:1.0 APB PWRITE" *)
     input         PWRITE,
     
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HADDR" *)
-    output [31:0] HADDR,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MCMD_AXIS TDATA" *)
+    output        [71:0] MCMD_TDATA,
     
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HBURST" *)
-    output  [2:0] HBURST,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MCMD_AXIS TREADY" *)
+    input                MCMD_TREADY,
     
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HPROT" *)
-    output  [3:0] HPROT,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MCMD_AXIS TVALID" *)
+    output               MCMD_TVALID,
     
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HRDATA" *)
-    input  [31:0] HRDATA,
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MSTS_AXIS TDATA" *)
+    input          [7:0] MSTS_TDATA,
+
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MSTS_AXIS TREADY" *)
+    output               MSTS_TREADY,
+     
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MSTS_AXIS TVALID" *)
+    input                MSTS_TVALID,
+         
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MDATA_AXIS TDATA" *)
+    input         [31:0] MDATA_TDATA,
     
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HREADY" *)
-    input         HREADY,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HRESP" *)
-    input         HRESP,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HSIZE" *)
-    output  [2:0] HSIZE,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HTRANS" *)   
-    output  [1:0] HTRANS,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HWDATA" *)
-    output [31:0] HWDATA,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HWRITE" *)
-    output        HWRITE,
-    
-    (* X_INTERFACE_INFO = "xilinx.com:interface:ahblite:2.0 AHB HMASTLOCK" *)
-    output        HMASTLOCK,
-    
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MDATA_AXIS TREADY" *)
+    output               MDATA_TREADY,
+        
+    (* X_INTERFACE_INFO = "xilinx.com:interface:axis:1.0 MDATA_AXIS TVALID" *)
+    input                MDATA_TVALID,
+         
     (* X_INTERFACE_INFO = "xilinx.com:interface:vid_io_rtl:1.0 VIDEO DATA" *)
     output [31:0] VID_DATA,
     
@@ -102,13 +96,9 @@ module dso100fb (
 
     wire fetch_en;
     wire [31:0] fetch_fb_base;
-    wire [31:0] fetch_fb_end;
+    wire [22:0] fetch_fb_length;
 
-    wire fifo_less_than_write_threshold;
     wire fifo_full;
-    wire fifo_write;
-    wire fifo_has_space_for_burst;
-    wire [31:0] fifo_write_data;
     
     wire [11:0] timing_widthbeforeoverlay;
     wire [11:0] timing_widthoverlay;
@@ -129,8 +119,6 @@ module dso100fb (
     wire sync_enable;
     
     wire video_fetch;
-    wire fetch_reset;
-    wire read_reset;
         
     wire frame;
     
@@ -171,7 +159,7 @@ module dso100fb (
         .STATE(state),
         
         .FETCH_FB_BASE(fetch_fb_base),
-        .FETCH_FB_END(fetch_fb_end),
+        .FETCH_FB_LENGTH(fetch_fb_length),
         
         .TIMING_WIDTHBEFOREOVERLAY(timing_widthbeforeoverlay),
         .TIMING_WIDTHOVERLAY(timing_widthoverlay),
@@ -209,29 +197,18 @@ module dso100fb (
     
     dso100fb_fetch fetch (
         .CLK(CLK),
-        .RST_N(RST_N && !fetch_reset),
+        .RST_N(RST_N),
         
         .FETCH_EN(fetch_en),
         .FETCH_FB_BASE(fetch_fb_base),
-        .FETCH_FB_END(fetch_fb_end),
-        
-        .HADDR(HADDR),
-        .HBURST(HBURST),
-        .HPROT(HPROT),
-        .HRDATA(HRDATA),
-        .HREADY(HREADY),
-        .HRESP(HRESP),
-        .HSIZE(HSIZE),
-        .HTRANS(HTRANS),
-        .HWDATA(HWDATA),
-        .HWRITE(HWRITE),
-        .HMASTLOCK(HMASTLOCK),
-        
-        .FIFO_LESS_THAN_WRITE_THRESHOLD(fifo_less_than_write_threshold),
-        .FIFO_HAS_SPACE_FOR_BURST(fifo_has_space_for_burst),
-        .FIFO_FULL(fifo_full),
-        .FIFO_WRITE(fifo_write),
-        .FIFO_DATA(fifo_write_data)
+        .FETCH_FB_LENGTH(fetch_fb_length),
+
+        .MCMD_TDATA(MCMD_TDATA),
+        .MCMD_TREADY(MCMD_TREADY),
+        .MCMD_TVALID(MCMD_TVALID),
+        .MSTS_TDATA(MSTS_TDATA),
+        .MSTS_TVALID(MSTS_TVALID),
+        .MSTS_TREADY(MSTS_TREADY)
     );
     
     async_fifo #(
@@ -240,20 +217,22 @@ module dso100fb (
         .WR_THRESHOLD(9'd16)
     ) fb_fifo (
         .RD_CLK(VIDCLK),
-        .RD_RST_N(vid_rst_n && !read_reset),
+        .RD_RST_N(vid_rst_n),
         .RD(video_fetch),
         .RD_EMPTY(video_empty),
         .RD_DATA(video_pixel),
         
         .WR_CLK(CLK),
-        .WR_RST_N(RST_N && !fetch_reset),
-        .WR(fifo_write),
+        .WR_RST_N(RST_N),
+        .WR(MDATA_TVALID),
         .WR_FULL(fifo_full),
-        .WR_DATA(fifo_write_data),
-        .WR_LESS_THAN_HALF_FULL(fifo_less_than_write_threshold),
-        .WR_ABOVE_THRESHOLD(fifo_has_space_for_burst)
+        .WR_DATA(MDATA_TDATA),
+        .WR_LESS_THAN_HALF_FULL(),
+        .WR_ABOVE_THRESHOLD()
     );
-    
+        
+    assign MDATA_TREADY = !fifo_full;
+        
     dso100fb_sync sync (
         .CLK(CLK),
         .VIDCLK(VIDCLK),
@@ -266,8 +245,6 @@ module dso100fb (
         .VID_VSYNC(vsync),
         
         .VIDEO_FETCH(video_fetch),
-        .FETCH_RESET(fetch_reset),
-        .READ_RESET(read_reset),
         .OVERLAY_EN(OVERLAY_EN),
         .OVERLAY_SYNC(OVERLAY_SYNC),
         

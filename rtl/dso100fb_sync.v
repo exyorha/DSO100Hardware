@@ -12,8 +12,6 @@ module dso100fb_sync (
     output       VIDEO_FETCH,
     output       OVERLAY_EN,
     output       OVERLAY_SYNC,
-    output       FETCH_RESET,
-    output reg   READ_RESET,
     
     input [11:0] WIDTHBEFOREOVERLAY,
     input [11:0] WIDTHOVERLAY,
@@ -153,22 +151,10 @@ module dso100fb_sync (
             { frame_ack_video, frame_ack_sync } <= 2'b00;
         else
             { frame_ack_video, frame_ack_sync } <= { frame_ack_sync, frame_main };
-    
-    always @ (posedge VIDCLK or negedge VID_RST_N)
-        if(!VID_RST_N)
-            READ_RESET <= 1'b0;
-        else
-        begin
-            if(frame)
-                READ_RESET <= 1'b1;
-            else if(frame_ack_video)
-                READ_RESET <= 1'b0;
-        end
-    
+        
     assign FRAME = frame_main && !frame_delayed;
     assign de = hde && vde;
     assign OVERLAY_EN = h_overlay_en && v_overlay_en;
-    assign FETCH_RESET = frame_main || frame_delayed;
     
     always @ (posedge VIDCLK or negedge VID_RST_N)
         if(!VID_RST_N)

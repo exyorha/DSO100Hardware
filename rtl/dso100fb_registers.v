@@ -20,7 +20,7 @@ module dso100fb_registers (
     input       [1:0] STATE,
     
     output reg [31:0] FETCH_FB_BASE,
-    output reg [31:0] FETCH_FB_END,
+    output reg [22:0] FETCH_FB_LENGTH,
     
     output reg [11:0] TIMING_WIDTHBEFOREOVERLAY,
     output reg [11:0] TIMING_WIDTHOVERLAY,
@@ -58,7 +58,7 @@ module dso100fb_registers (
             imr <= 2'b00;
             
             FETCH_FB_BASE <= 32'b0;
-            FETCH_FB_END <= 32'b0;
+            FETCH_FB_LENGTH <= 23'b0;
             TIMING_WIDTHBEFOREOVERLAY <= 12'b0;
             TIMING_WIDTHOVERLAY <= 12'b0;
             TIMING_WIDTHAFTEROVERLAY <= 12'b0;
@@ -99,8 +99,8 @@ module dso100fb_registers (
                 `DSO100FB_REG_FB_BASE:
                     PRDATA <= FETCH_FB_BASE;
                     
-                `DSO100FB_REG_FB_END:
-                    PRDATA <= FETCH_FB_END;
+                `DSO100FB_REG_FB_LENGTH:
+                    PRDATA[`DSO100FB_FB_LENGTH_FB_LENGTH] <= FETCH_FB_LENGTH;
                     
                 `DSO100FB_REG_HTIMING1:
                 begin
@@ -166,8 +166,8 @@ module dso100fb_registers (
                     `DSO100FB_REG_FB_BASE:
                         FETCH_FB_BASE <= PWDATA;
                         
-                    `DSO100FB_REG_FB_END:
-                        FETCH_FB_END <= PWDATA;
+                    `DSO100FB_REG_FB_LENGTH:
+                        FETCH_FB_LENGTH <= PWDATA[`DSO100FB_FB_LENGTH_FB_LENGTH];
                         
                     `DSO100FB_REG_HTIMING1:
                     begin

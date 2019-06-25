@@ -29,15 +29,14 @@
 #
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_gpio_intercon.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/async_fifo.v"
-#    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_zedboard_video_formatter.v"
-#    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_fetch.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_interface.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_registers.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_startstop.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_sync.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_video_mix.v"
-#    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_top.v"
+#    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb.v"
+#    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_zedboard_video_formatter.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/dso100.xdc"
 #    "C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_interface.v"
 #    "C:/projects/autobsd/projects/DSO100Hardware/sim/dso100fb_test.v"
@@ -146,13 +145,13 @@ set_property -name "part" -value "xc7z020clg484-1" -objects $obj
 set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_user_files" -objects $obj
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "Mixed" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.ies_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "9" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "9" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "11" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "11" -objects $obj
 set_property -name "webtalk.xsim_launch_sim" -value "81" -objects $obj
 set_property -name "xpm_libraries" -value "XPM_CDC XPM_FIFO XPM_MEMORY" -objects $obj
 
@@ -166,15 +165,14 @@ set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/rtl/dso100_gpio_intercon.v"] \
  [file normalize "${origin_dir}/rtl/async_fifo.v"] \
- [file normalize "${origin_dir}/rtl/dso100_zedboard_video_formatter.v"] \
- [file normalize "${origin_dir}/rtl/dso100fb.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_fetch.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_interface.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_registers.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_startstop.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_sync.v"] \
  [file normalize "${origin_dir}/rtl/dso100fb_video_mix.v"] \
- [file normalize "${origin_dir}/rtl/dso100_top.v"] \
+ [file normalize "${origin_dir}/rtl/dso100fb.v"] \
+ [file normalize "${origin_dir}/rtl/dso100_zedboard_video_formatter.v"] \
 ]
 add_files -norecurse -fileset $obj $files
 
@@ -192,7 +190,7 @@ set_property -name "file_type" -value "Verilog Header" -objects $file_obj
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
-set_property -name "top" -value "dso100_top" -objects $obj
+
 set_property -name "top_auto_set" -value "0" -objects $obj
 
 # Create 'constrs_1' fileset (if not found)
@@ -228,7 +226,8 @@ set obj [get_filesets sim_1]
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "dso100_top" -objects $obj
+set_property -name "top" -value "dso100fb" -objects $obj
+set_property -name "top_file" -value "rtl/dso100fb.v" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 
 # Create 'dso100fb_sim' fileset (if not found)
@@ -265,13 +264,40 @@ set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
 if { [get_files dso100_gpio_intercon.v] == "" } {
   import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_gpio_intercon.v
 }
+if { [get_files async_fifo.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/async_fifo.v
+}
+if { [get_files dso100fb_fetch.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_fetch.v
+}
+if { [get_files dso100fb_interface.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_interface.v
+}
+if { [get_files dso100fb_registers.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_registers.v
+}
+if { [get_files dso100fb_startstop.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_startstop.v
+}
+if { [get_files dso100fb_sync.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_sync.v
+}
+if { [get_files dso100fb_video_mix.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb_video_mix.v
+}
+if { [get_files dso100fb.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100fb.v
+}
+if { [get_files dso100_zedboard_video_formatter.v] == "" } {
+  import_files -quiet -fileset sources_1 C:/projects/autobsd/projects/DSO100Hardware/rtl/dso100_zedboard_video_formatter.v
+}
 
 
 # Proc to create BD dso100
 proc cr_bd_dso100 { parentCell } {
 # The design that will be created by this Tcl proc contains the following 
 # module references:
-# dso100_gpio_intercon
+# dso100fb, dso100_zedboard_video_formatter, dso100_gpio_intercon
 
 
 
@@ -289,12 +315,13 @@ proc cr_bd_dso100 { parentCell } {
   set bCheckIPs 1
   if { $bCheckIPs == 1 } {
      set list_check_ips "\ 
+  xilinx.com:ip:axi_datamover:5.1\
   xilinx.com:ip:axi_apb_bridge:3.0\
-  xilinx.com:ip:ahblite_axi_bridge:3.0\
   xilinx.com:ip:processing_system7:5.5\
   xilinx.com:ip:proc_sys_reset:5.0\
   xilinx.com:ip:util_ds_buf:2.1\
   xilinx.com:ip:clk_wiz:6.0\
+  xilinx.com:ip:xlconstant:1.1\
   "
 
    set list_ips_missing ""
@@ -320,6 +347,8 @@ proc cr_bd_dso100 { parentCell } {
   set bCheckModules 1
   if { $bCheckModules == 1 } {
      set list_check_mods "\ 
+  dso100fb\
+  dso100_zedboard_video_formatter\
   dso100_gpio_intercon\
   "
 
@@ -372,22 +401,60 @@ proc cr_bd_dso100 { parentCell } {
 
 
   # Create interface ports
-  set AHB_EXT [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:ahblite_rtl:2.0 AHB_EXT ]
-  set APB_EXT [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:apb_rtl:1.0 APB_EXT ]
   set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
   set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
 
   # Create ports
-  set CLK [ create_bd_port -dir O -from 0 -to 0 -type clk CLK ]
-  set INTR_EXT [ create_bd_port -dir I -from 0 -to 0 -type intr INTR_EXT ]
-  set_property -dict [ list \
-   CONFIG.PortWidth {1} \
- ] $INTR_EXT
+  set HD_CLK [ create_bd_port -dir O -type clk HD_CLK ]
+  set HD_D [ create_bd_port -dir O -from 15 -to 0 HD_D ]
+  set HD_DE [ create_bd_port -dir O HD_DE ]
+  set HD_HSYNC [ create_bd_port -dir O HD_HSYNC ]
+  set HD_VSYNC [ create_bd_port -dir O HD_VSYNC ]
   set OTG_RESETN [ create_bd_port -dir IO -type rst OTG_RESETN ]
   set OTG_VBUSOC [ create_bd_port -dir I OTG_VBUSOC ]
-  set RST_N [ create_bd_port -dir O -type rst RST_N ]
-  set VID_CLK [ create_bd_port -dir O -type clk VID_CLK ]
+  set VGA_B [ create_bd_port -dir O -from 4 -to 1 VGA_B ]
+  set VGA_G [ create_bd_port -dir O -from 4 -to 1 VGA_G ]
+  set VGA_HS [ create_bd_port -dir O VGA_HS ]
+  set VGA_R [ create_bd_port -dir O -from 4 -to 1 VGA_R ]
+  set VGA_VS [ create_bd_port -dir O VGA_VS ]
 
+  # Create instance: DSO100FB, and set properties
+  set block_name dso100fb
+  set block_cell_name DSO100FB
+  if { [catch {set DSO100FB [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_msg_id "BD_TCL-105" "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $DSO100FB eq "" } {
+     catch {common::send_msg_id "BD_TCL-106" "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  # Create instance: FB_DATAMOVER, and set properties
+  set FB_DATAMOVER [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_datamover:5.1 FB_DATAMOVER ]
+  set_property -dict [ list \
+   CONFIG.c_dummy {1} \
+   CONFIG.c_enable_mm2s_adv_sig {0} \
+   CONFIG.c_enable_s2mm {0} \
+   CONFIG.c_include_s2mm {Omit} \
+   CONFIG.c_include_s2mm_stsfifo {false} \
+   CONFIG.c_m_axi_mm2s_id_width {0} \
+   CONFIG.c_m_axi_s2mm_awid {1} \
+   CONFIG.c_mm2s_btt_used {23} \
+   CONFIG.c_s2mm_addr_pipe_depth {3} \
+   CONFIG.c_s2mm_include_sf {false} \
+ ] $FB_DATAMOVER
+
+  # Create instance: VIDEO_FORMATTER, and set properties
+  set block_name dso100_zedboard_video_formatter
+  set block_cell_name VIDEO_FORMATTER
+  if { [catch {set VIDEO_FORMATTER [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_msg_id "BD_TCL-105" "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $VIDEO_FORMATTER eq "" } {
+     catch {common::send_msg_id "BD_TCL-106" "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create instance: apb_bridge, and set properties
   set apb_bridge [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_apb_bridge:3.0 apb_bridge ]
   set_property -dict [ list \
@@ -405,12 +472,6 @@ proc cr_bd_dso100 { parentCell } {
   set_property -dict [ list \
    CONFIG.NUM_MI {1} \
  ] $axi_video_intercon
-
-  # Create instance: dso100fb_ahb_bridge, and set properties
-  set dso100fb_ahb_bridge [ create_bd_cell -type ip -vlnv xilinx.com:ip:ahblite_axi_bridge:3.0 dso100fb_ahb_bridge ]
-  set_property -dict [ list \
-   CONFIG.C_M_AXI_NON_SECURE {0} \
- ] $dso100fb_ahb_bridge
 
   # Create instance: gpio_intercon, and set properties
   set block_name dso100_gpio_intercon
@@ -837,12 +898,28 @@ proc cr_bd_dso100 { parentCell } {
    CONFIG.USE_RESET {false} \
  ] $vid_clkwiz
 
+  # Create instance: xlconstant_0, and set properties
+  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
+  set_property -dict [ list \
+   CONFIG.CONST_VAL {0} \
+ ] $xlconstant_0
+
+  # Create instance: xlconstant_1, and set properties
+  set xlconstant_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_1 ]
+  set_property -dict [ list \
+   CONFIG.CONST_VAL {0} \
+   CONFIG.CONST_WIDTH {32} \
+ ] $xlconstant_1
+
   # Create interface connections
-  connect_bd_intf_net -intf_net AHB_INTERFACE_0_1 [get_bd_intf_ports AHB_EXT] [get_bd_intf_pins dso100fb_ahb_bridge/AHB_INTERFACE]
-  connect_bd_intf_net -intf_net apb_bridge_APB_M [get_bd_intf_ports APB_EXT] [get_bd_intf_pins apb_bridge/APB_M]
+  connect_bd_intf_net -intf_net DSO100FB_MCMD_AXIS [get_bd_intf_pins DSO100FB/MCMD_AXIS] [get_bd_intf_pins FB_DATAMOVER/S_AXIS_MM2S_CMD]
+  connect_bd_intf_net -intf_net DSO100FB_VIDEO [get_bd_intf_pins DSO100FB/VIDEO] [get_bd_intf_pins VIDEO_FORMATTER/VIDEO]
+  connect_bd_intf_net -intf_net FB_DATAMOVER_M_AXIS_MM2S [get_bd_intf_pins DSO100FB/MDATA_AXIS] [get_bd_intf_pins FB_DATAMOVER/M_AXIS_MM2S]
+  connect_bd_intf_net -intf_net FB_DATAMOVER_M_AXIS_MM2S_STS [get_bd_intf_pins DSO100FB/MSTS_AXIS] [get_bd_intf_pins FB_DATAMOVER/M_AXIS_MM2S_STS]
+  connect_bd_intf_net -intf_net apb_bridge_APB_M [get_bd_intf_pins DSO100FB/APB] [get_bd_intf_pins apb_bridge/APB_M]
+  connect_bd_intf_net -intf_net axi_datamover_0_M_AXI_MM2S [get_bd_intf_pins FB_DATAMOVER/M_AXI_MM2S] [get_bd_intf_pins axi_video_intercon/S00_AXI]
   connect_bd_intf_net -intf_net axi_interconnect_0_M00_AXI [get_bd_intf_pins axi_video_intercon/M00_AXI] [get_bd_intf_pins ps7/S_AXI_HP0]
   connect_bd_intf_net -intf_net axi_slave_intercon_M00_AXI [get_bd_intf_pins apb_bridge/AXI4_LITE] [get_bd_intf_pins axi_slave_intercon/M00_AXI]
-  connect_bd_intf_net -intf_net dso100fb_ahb_bridge_M_AXI [get_bd_intf_pins axi_video_intercon/S00_AXI] [get_bd_intf_pins dso100fb_ahb_bridge/M_AXI]
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins ps7/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins ps7/FIXED_IO]
   connect_bd_intf_net -intf_net ps7_GPIO_0 [get_bd_intf_pins gpio_intercon/EMIO] [get_bd_intf_pins ps7/GPIO_0]
@@ -850,19 +927,31 @@ proc cr_bd_dso100 { parentCell } {
   connect_bd_intf_net -intf_net ps7_USBIND_0 [get_bd_intf_pins gpio_intercon/USBIND] [get_bd_intf_pins ps7/USBIND_0]
 
   # Create port connections
-  connect_bd_net -net ARESETN_1 [get_bd_pins apb_bridge/s_axi_aresetn] [get_bd_pins axi_slave_intercon/ARESETN] [get_bd_pins axi_slave_intercon/M00_ARESETN] [get_bd_pins axi_slave_intercon/S00_ARESETN] [get_bd_pins axi_video_intercon/ARESETN] [get_bd_pins axi_video_intercon/M00_ARESETN] [get_bd_pins axi_video_intercon/S00_ARESETN] [get_bd_pins dso100fb_ahb_bridge/s_ahb_hresetn] [get_bd_pins ps7_reset/interconnect_aresetn]
-  connect_bd_net -net IRQ_F2P_0_1 [get_bd_ports INTR_EXT] [get_bd_pins ps7/IRQ_F2P]
+  connect_bd_net -net ARESETN_1 [get_bd_pins DSO100FB/RST_N] [get_bd_pins FB_DATAMOVER/m_axi_mm2s_aresetn] [get_bd_pins FB_DATAMOVER/m_axis_mm2s_cmdsts_aresetn] [get_bd_pins apb_bridge/s_axi_aresetn] [get_bd_pins axi_slave_intercon/ARESETN] [get_bd_pins axi_slave_intercon/M00_ARESETN] [get_bd_pins axi_slave_intercon/S00_ARESETN] [get_bd_pins axi_video_intercon/ARESETN] [get_bd_pins axi_video_intercon/M00_ARESETN] [get_bd_pins axi_video_intercon/S00_ARESETN] [get_bd_pins ps7_reset/interconnect_aresetn]
+  connect_bd_net -net DSO100FB_VID_RST_N [get_bd_pins DSO100FB/VID_RST_N] [get_bd_pins VIDEO_FORMATTER/RST_N]
   connect_bd_net -net OTG_RESETN [get_bd_ports OTG_RESETN] [get_bd_pins gpio_intercon/OTG_RESETN]
   connect_bd_net -net OTG_VBUSOC [get_bd_ports OTG_VBUSOC] [get_bd_pins gpio_intercon/OTG_VBUSOC]
-  connect_bd_net -net PERIPHERAL_CLK [get_bd_ports CLK] [get_bd_pins apb_bridge/s_axi_aclk] [get_bd_pins axi_slave_intercon/ACLK] [get_bd_pins axi_slave_intercon/M00_ACLK] [get_bd_pins axi_slave_intercon/S00_ACLK] [get_bd_pins axi_video_intercon/ACLK] [get_bd_pins axi_video_intercon/M00_ACLK] [get_bd_pins axi_video_intercon/S00_ACLK] [get_bd_pins dso100fb_ahb_bridge/s_ahb_hclk] [get_bd_pins ps7/M_AXI_GP0_ACLK] [get_bd_pins ps7/S_AXI_HP0_ACLK] [get_bd_pins ps7_reset/slowest_sync_clk] [get_bd_pins util_ds_buf_0/BUFG_O] [get_bd_pins vid_clkwiz/clk_in1]
+  connect_bd_net -net PERIPHERAL_CLK [get_bd_pins DSO100FB/CLK] [get_bd_pins FB_DATAMOVER/m_axi_mm2s_aclk] [get_bd_pins FB_DATAMOVER/m_axis_mm2s_cmdsts_aclk] [get_bd_pins apb_bridge/s_axi_aclk] [get_bd_pins axi_slave_intercon/ACLK] [get_bd_pins axi_slave_intercon/M00_ACLK] [get_bd_pins axi_slave_intercon/S00_ACLK] [get_bd_pins axi_video_intercon/ACLK] [get_bd_pins axi_video_intercon/M00_ACLK] [get_bd_pins axi_video_intercon/S00_ACLK] [get_bd_pins ps7/M_AXI_GP0_ACLK] [get_bd_pins ps7/S_AXI_HP0_ACLK] [get_bd_pins ps7_reset/slowest_sync_clk] [get_bd_pins util_ds_buf_0/BUFG_O] [get_bd_pins vid_clkwiz/clk_in1]
+  connect_bd_net -net VIDEO_FORMATTER_HD_D [get_bd_ports HD_D] [get_bd_pins VIDEO_FORMATTER/HD_D]
+  connect_bd_net -net VIDEO_FORMATTER_HD_DE [get_bd_ports HD_DE] [get_bd_pins VIDEO_FORMATTER/HD_DE]
+  connect_bd_net -net VIDEO_FORMATTER_HD_HSYNC [get_bd_ports HD_HSYNC] [get_bd_pins VIDEO_FORMATTER/HD_HSYNC]
+  connect_bd_net -net VIDEO_FORMATTER_HD_VSYNC [get_bd_ports HD_VSYNC] [get_bd_pins VIDEO_FORMATTER/HD_VSYNC]
+  connect_bd_net -net VIDEO_FORMATTER_VGA_B [get_bd_ports VGA_B] [get_bd_pins VIDEO_FORMATTER/VGA_B]
+  connect_bd_net -net VIDEO_FORMATTER_VGA_G [get_bd_ports VGA_G] [get_bd_pins VIDEO_FORMATTER/VGA_G]
+  connect_bd_net -net VIDEO_FORMATTER_VGA_HS [get_bd_ports VGA_HS] [get_bd_pins VIDEO_FORMATTER/VGA_HS]
+  connect_bd_net -net VIDEO_FORMATTER_VGA_R [get_bd_ports VGA_R] [get_bd_pins VIDEO_FORMATTER/VGA_R]
+  connect_bd_net -net VIDEO_FORMATTER_VGA_VS [get_bd_ports VGA_VS] [get_bd_pins VIDEO_FORMATTER/VGA_VS]
   connect_bd_net -net clk_wiz_0_locked [get_bd_pins ps7_reset/dcm_locked] [get_bd_pins vid_clkwiz/locked]
+  connect_bd_net -net dso100fb_0_INTR [get_bd_pins DSO100FB/INTR] [get_bd_pins ps7/IRQ_F2P]
   connect_bd_net -net ps7_FCLK_CLK0 [get_bd_pins ps7/FCLK_CLK0] [get_bd_pins util_ds_buf_0/BUFG_I]
-  connect_bd_net -net ps7_FCLK_RESET0_N [get_bd_ports RST_N] [get_bd_pins ps7/FCLK_RESET0_N] [get_bd_pins ps7_reset/ext_reset_in]
-  connect_bd_net -net vid_clkwiz_clk_out1 [get_bd_ports VID_CLK] [get_bd_pins vid_clkwiz/clk_out1]
+  connect_bd_net -net ps7_FCLK_RESET0_N [get_bd_pins ps7/FCLK_RESET0_N] [get_bd_pins ps7_reset/ext_reset_in]
+  connect_bd_net -net vid_clkwiz_clk_out1 [get_bd_ports HD_CLK] [get_bd_pins DSO100FB/VIDCLK] [get_bd_pins VIDEO_FORMATTER/CLK] [get_bd_pins vid_clkwiz/clk_out1]
+  connect_bd_net -net xlconstant_0_dout [get_bd_pins DSO100FB/OVERLAY_VALID] [get_bd_pins xlconstant_0/dout]
+  connect_bd_net -net xlconstant_1_dout [get_bd_pins DSO100FB/OVERLAY_DATA] [get_bd_pins xlconstant_1/dout]
 
   # Create address segments
-  create_bd_addr_seg -range 0x00010000 -offset 0x43C00000 [get_bd_addr_spaces ps7/Data] [get_bd_addr_segs APB_EXT/Reg] SEG_APB_EXT_Reg
-  create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces AHB_EXT] [get_bd_addr_segs ps7/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_ps7_HP0_DDR_LOWOCM
+  create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces FB_DATAMOVER/Data_MM2S] [get_bd_addr_segs ps7/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_ps7_HP0_DDR_LOWOCM
+  create_bd_addr_seg -range 0x00010000 -offset 0x43C00000 [get_bd_addr_spaces ps7/Data] [get_bd_addr_segs DSO100FB/APB/Reg] SEG_DSO100FB_Reg
 
 
   # Restore current instance

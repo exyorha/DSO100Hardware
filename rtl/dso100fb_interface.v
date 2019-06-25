@@ -55,9 +55,9 @@
 `define DSO100FB_REG_FB_BASE      4'd3
 
 /*!
- * Регистр адреса конца буфера кадра.
+ * Регистр длины буфера кадра.
  */
-`define DSO100FB_REG_FB_END       4'd4
+`define DSO100FB_REG_FB_LENGTH    4'd4
 
 `define DSO100FB_REG_HTIMING1     4'd5
 `define DSO100FB_REG_HTIMING2     4'd6
@@ -194,6 +194,11 @@
  * Продолжительность импульса кадровой синхронизации в строках.
  */
 `define DSO100FB_VTIMING3_SYNCPULSE           11:0
+
+/*!
+ * Длина буфера кадра в байтах.
+ */
+`define DSO100FB_FB_LENGTH_FB_LENGTH          22:0
 
 /*!
  * Полярность сигнала кадровой синхронизации: 0 - активный высокий,
