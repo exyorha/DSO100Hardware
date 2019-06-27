@@ -1,5 +1,5 @@
 /set uname=root gname=wheel
 . type=dir mode=0755
-  DSO100 type=file mode=0755 contents=/root/world/sbin/init
+  DSO100 type=file mode=0755 contents=%DSO%
   dev type=dir mode=0755
     ..
